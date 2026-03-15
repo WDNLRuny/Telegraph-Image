@@ -1,22 +1,7 @@
 import { errorHandling, telemetryData } from "./utils/middleware";
 
-const ALLOWED_ORIGIN = '*';
-
 export async function onRequestPost(context) {
     const { request, env } = context;
-
-    // 处理预检请求 (Preflight Request)
-    // 浏览器在发送实际 POST 请求前，会先发送一个 OPTIONS 请求来确认服务器允许跨域。
-    if (request.method === 'OPTIONS') {
-        return new Response(null, {
-            headers: {
-                'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Max-Age': '86400',
-            },
-        });
-    }
 
     try {
         const clonedRequest = request.clone();
@@ -82,10 +67,7 @@ export async function onRequestPost(context) {
             JSON.stringify([{ 'src': `/file/${fileId}.${fileExtension}` }]),
             {
                 status: 200,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': ALLOWED_ORIGIN
-                }
+                headers: { 'Content-Type': 'application/json' }
             }
         );
     } catch (error) {
